@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DROPLETS – Today's Drops, Tomorrow's Lives.</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & BASE STYLES --- */
+        :root {
+            --color-dark-navy: #02041B;
+            --color-electric-blue: #0077FF;
+            --color-glow-blue: #00BFFF;
+            --color-text: #E0E0E0;
+            --color-text-darker: #A0A0A0;
+            --font-header: 'Montserrat', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-dark-navy);
+            background-image: linear-gradient(180deg, var(--color-dark-navy) 0%, #03103D 100%);
+            color: var(--color-text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND PARTICLE ANIMATION --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%230077FF" cx="50" cy="50" r="1"/></svg>');
+            background-size: 10px 10px;
+            opacity: 0;
+            animation: particles 30s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes particles {
+            0% { transform: translate(0, 0); opacity: 0; }
+            50% { opacity: 0.1; }
+            100% { transform: translate(-100px, 100px); opacity: 0; }
+        }
+
+        /* --- UTILITY & REUSABLE CLASSES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .glass-card {
+            background: rgba(10, 25, 60, 0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-header);
+            font-weight: 700;
+        }
+
+        h1 { font-size: 3.5rem; }
+        h2 { font-size: 2.5rem; color: var(--color-glow-blue); }
+        p { line-height: 1.7; color: var(--color-text-darker); }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--color-electric-blue);
+            color: #FFF;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: var(--font-header);
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.5), 0 0 30px rgba(0, 123, 255, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.8), 0 0 50px rgba(0, 191, 255, 0.5);
+            background: var(--color-glow-blue);
+        }
+
+        /* --- ANIMATION PREP (for JS) --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in { transform: translateY(30px); }
+        .slide-up { transform: translateY(50px); }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+        }
+
+        .header-logo .logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .header-logo .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .hero::after { /* Wave Animation */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230077FF" fill-opacity="0.1" d="M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,186.7C672,192,768,160,864,144C960,128,1056,128,1152,149.3C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            animation: wave 15s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .hero .product-image {
+            max-width: 350px;
+            margin-bottom: 2rem;
+            transform: rotate(-5deg);
+            filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.4));
+            transition: transform 0.4s ease-in-out;
+            /* On-load animation setup */
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 0.5s forwards;
+        }
+
+        .hero .product-image:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .hero-content {
+            /* On-load animation setup */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero h1 {
+            color: #FFF;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+        }
+
+        .hero .subheading {
+            max-width: 600px;
+            margin: 0 auto 2.5rem auto;
+            font-size: 1.1rem;
+            color: var(--color-text-darker);
+        }
+
+        /* --- ABOUT SECTION --- */
+        #about {
+            position: relative;
+        }
+
+        #about::before { /* Animated water background */
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #02041b, #031e67, #02041b);
+            background-size: 400% 400%;
+            animation: gradient-flow 10s ease infinite;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #about .glass-card {
+            text-align: center;
+        }
+
+        .about-features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            flex-basis: 200px;
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            color: var(--color-glow-blue);
+            margin-bottom: 1rem;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        
+        .feature-item:hover i {
+            color: #FFF;
+            text-shadow: 0 0 15px var(--color-glow-blue);
+        }
+
+        .feature-item h3 {
+            font-size: 1.2rem;
+            color: var(--color-text);
+        }
+
+        /* --- FOUNDER'S MESSAGE --- */
+        .founder-message {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .founder-message .silhouette {
+            flex-basis: 200px;
+            height: 200px;
+            background: rgba(0, 191, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(0, 191, 255, 0.2);
+        }
+        
+        .founder-message .silhouette i {
+            font-size: 6rem;
+            color: rgba(0, 191, 255, 0.4);
+        }
+
+        .founder-message .message {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .founder-message blockquote {
+            font-size: 1.2rem;
+            font-style: italic;
+            border-left: 3px solid var(--color-electric-blue);
+            padding-left: 1.5rem;
+        }
+
+        .founder-message .author {
+            margin-top: 1rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        /* --- FEATURES & SUCCESS CRITERIA SECTION --- */
+        #features .container { text-align: center; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 180px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .flip-card-front {
+            background: rgba(10, 25, 60, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            border-radius: 16px;
+        }
+        
+        .flip-card-front h3 {
+            color: var(--color-glow-blue);
+            font-size: 1.4rem;
+        }
+
+        .flip-card-back {
+            background: rgba(0, 123, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            border-radius: 16px;
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-back p {
+            color: #FFF;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* --- WORK WITH US SECTION --- */
+        #work-with-us {
+            border-top: 1px solid rgba(0, 191, 255, 0.3);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.3);
+            box-shadow: inset 0 0 40px rgba(0, 123, 255, 0.2);
+        }
+
+        #work-with-us .container {
+            max-width: 800px;
+            text-align: center;
+        }
+        #work-with-us p {
+            margin-bottom: 2rem;
+        }
+
+        .contact-form .glass-card { padding: 3rem; }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 8px;
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%230077FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: var(--color-dark-navy);
+            color: var(--color-text);
+            padding: 0.5rem;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--color-glow-blue);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* --- NEWSLETTER SECTION --- */
+        #newsletter .container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .newsletter-card {
+            background: rgba(0, 123, 255, 0.1);
+            border: 1px solid var(--color-electric-blue);
+            box-shadow: 0 0 40px rgba(0, 123, 255, 0.4);
+            padding: 3rem;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter-card::before { /* Inner waves */
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 200%;
+            height: 150px;
+            background: var(--color-electric-blue);
+            opacity: 0.1;
+            border-radius: 50%;
+            animation: newsletter-wave 10s linear infinite alternate;
+            z-index: -1; /* Ensure wave stays behind content */
+            pointer-events: none; /* Make wave non-interactive */
+        }
+
+        .newsletter-form {
+            position: relative; /* Ensure form stays above the wave */
+            z-index: 1;
+        }
+
+        @keyframes newsletter-wave {
+            from { transform: translateX(0) rotate(0deg); }
+            to { transform: translateX(-25%) rotate(10deg); }
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .newsletter-form input {
+            flex-grow: 1;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid rgba(0, 191, 255, 0.5);
+            border-radius: 8px;
+            color: var(--color-text);
+            font-size: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            min-width: 250px;
+        }
+
+        .newsletter-form input:focus {
+            outline: none;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 2rem;
+            border-top: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo-image {
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(0, 191, 255, 0.2));
+            transition: filter 0.3s ease;
+        }
+
+        .footer-logo-image:hover {
+            filter: drop-shadow(0 0 12px rgba(0, 191, 255, 0.4));
+        }
+
+        .social-icons a {
+            color: var(--color-text-darker);
+            font-size: 1.5rem;
+            margin-left: 1.5rem;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--color-glow-blue);
+            text-shadow: 0 0 10px var(--color-glow-blue);
+        }
+        
+        .copyright {
+            color: var(--color-text-darker);
+            font-size: 0.9rem;
+        }
+        
+        /* --- NEWSLETTER POPUP --- */
+        .newsletter-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 350px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.5s, visibility 0.5s, transform 0.5s;
+        }
+
+        .newsletter-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .newsletter-popup .glass-card {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .newsletter-popup h4 {
+            color: var(--color-glow-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .newsletter-popup p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-popup .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--color-text-darker);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .newsletter-popup .close-popup:hover {
+            color: var(--color-text);
+        }
+
+        .newsletter-popup form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .newsletter-popup input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            border-radius: 4px;
+            color: var(--color-text);
+            font-size: 0.9rem;
+        }
+
+        .newsletter-popup .cta-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            .container { padding: 3rem 1.5rem; }
+            
+            .hero .product-image { max-width: 250px; }
+
+            .founder-message {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .founder-message .silhouette {
+                margin: 0 auto;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            .social-icons a { margin: 0 0.75rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="header-logo">
+            <img src="logo.png" alt="DROPLETS Logo" class="logo">
+        </div>
+        <div id="hero-parallax-bg"></div>
+        <img src="product.png" alt="DROPLETS Smart Water Monitoring Device" class="product-image">
+        
+        <div class="hero-content">
+            <h1>DROPLETS – Today's Drops, Tomorrow's Lives.</h1>
+            <p class="subheading">A non-intrusive, wall-mounted device delivering real-time insights into your water usage.</p>
+            <a href="#newsletter" class="cta-button" id="join-movement-btn">Join the Movement</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="about" class="animate-on-scroll fade-in">
+            <div class="container">
+                <div class="glass-card">
+                    <p>💧 2.1 billion people lack access to safe drinking water. DROPLETS is built to change that. With non-intrusive installation, real-time data, and accurate event classification, DROPLETS makes saving water simple and impactful.</p>
+                    <div class="about-features">
+                        <div class="feature-item">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <h3>Non-intrusive</h3>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <h3>Reliable</h3>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <h3>Real-time</h3>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-bullseye"></i>
+                            <h3>Accurate</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="founder" class="animate-on-scroll slide-up">
+            <div class="container">
+                <div class="glass-card founder-message">
+                    <div class="silhouette">
+                        <img src="rishabh.jpg" alt="Rishabh Pal" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    </div>
+                    <div class="message">
+                        <blockquote>
+                            "When I started DROPLETS, people told me you can’t measure water in a non-intrusive manner with sound. Today, we’ve proven you can. This project isn’t about building the most sophisticated tech-it’s about responsibility. Every drop counts, and together, we can save billions of them. Because today's drops are tomorrow's lives; and someone has to begin."
+                        </blockquote>
+                        <p class="author">— Rishabh Pal, Founder of DROPLETS</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="animate-on-scroll fade-in">
+            <div class="container">
+                <h2>Features & Success Criteria</h2>
+                <div class="features-grid">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front"><h3>Easy Installation</h3></div>
+                            <div class="flip-card-back"><p>No plumbing modifications needed.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front"><h3>Device Reliability</h3></div>
+                            <div class="flip-card-back"><p>Operates 24+ hours continuously.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front"><h3>Real-time Insights</h3></div>
+                            <div class="flip-card-back"><p>Data delay ≤ 30 seconds.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front"><h3>Event Classification</h3></div>
+                            <div class="flip-card-back"><p>≥81% accuracy.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front"><h3>Consumption Accuracy</h3></div>
+                            <div class="flip-card-back"><p>≤20% deviation.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="work-with-us" class="animate-on-scroll slide-up">
+            <div class="container">
+                <h2>Work With Us – Build the Future of Water Sustainability</h2>
+                <p>We’re looking for dreamers, engineers, and changemakers to join us.</p>
+                <form class="contact-form" action="https://formsubmit.co/palrishabh783@gmail.com" method="POST">
+                    <input type="hidden" name="_next" value="https://droplets.techwell.biz/thanks.html">
+                    <input type="hidden" name="_subject" value="New Job Application for DROPLETS!">
+                    <input type="hidden" name="_captcha" value="false">
+                    <div class="glass-card">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <select name="role" required class="role-select">
+                                <option value="">Select Your Role</option>
+                                <option value="ai-ml-engineer">AI/ML Engineer</option>
+                                <option value="ai-ml-research">AI/ML Research</option>
+                                <option value="frontend-developer">Frontend Developer</option>
+                                <option value="backend-developer">Backend Developer</option>
+                                <option value="full-stack-developer">Full-Stack Developer</option>
+                                <option value="mobile-app-developer">Mobile App Developer</option>
+                                <option value="creative-content-producer">Creative Content Producer</option>
+                                <option value="marketing-media-manager">Marketing Media Manager</option>
+                                <option value="strategic-partnerships-manager">Strategic Partnerships Manager</option>
+                                <option value="hr-manager">HR Manager</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="Why do you want to work with us?" required></textarea>
+                        </div>
+                        <button type="submit" class="cta-button">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="newsletter" class="animate-on-scroll fade-in">
+            <div class="container">
+                <div class="newsletter-card">
+                    <h3>Join Our Water Conservation Newsletter</h3>
+                    <p>Get the latest updates on DROPLETS, technology insights, and our mission to save water. Join our community today!</p>
+                    <form class="newsletter-form" action="https://formsubmit.co/palrishabh783@gmail.com" method="POST">
+                        <input type="hidden" name="_next" value="https://droplets.techwell.biz/thanks.html">
+                        <input type="hidden" name="_subject" value="New Newsletter Subscription!">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                        <button type="submit" class="cta-button">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="logo.png" alt="DROPLETS Logo" class="footer-logo-image">
+            </div>
+            <div class="social-icons">
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+            <div class="copyright">
+                Copyright © 2025 DROPLETS. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <div class="newsletter-popup">
+        <div class="glass-card">
+            <button class="close-popup" aria-label="Close popup"><i class="fa-solid fa-times"></i></button>
+            <h4>Join Our Newsletter - It's Free!</h4>
+            <p>Get exclusive news and be part of our mission to save water.</p>
+            <form class="popup-newsletter-form" action="https://formsubmit.co/palrishabh783@gmail.com" method="POST">
+                <input type="hidden" name="_next" value="https://droplets.techwell.biz/thanks.html">
+                <input type="hidden" name="_subject" value="New Newsletter Subscription from Popup!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="email" name="email" placeholder="Your email" required>
+                <button type="submit" class="cta-button">Join</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Newsletter Popup Logic
+            const newsletterPopup = document.querySelector('.newsletter-popup');
+            const closePopupBtn = document.querySelector('.close-popup');
+            let hasShownPopup = sessionStorage.getItem('popupShown') === 'true';
+
+            // Function to show popup
+            function showNewsletterPopup() {
+                if (!hasShownPopup) {
+                    newsletterPopup.classList.add('show');
+                    hasShownPopup = true;
+                    sessionStorage.setItem('popupShown', 'true');
+                }
+            }
+
+            // Close popup when close button is clicked
+            closePopupBtn.addEventListener('click', () => {
+                newsletterPopup.classList.remove('show');
+            });
+
+            // Show popup when founder's message is visible
+            const founderSection = document.querySelector('#founder');
+            if (founderSection) {
+                const founderObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && !hasShownPopup) {
+                            setTimeout(() => {
+                                showNewsletterPopup();
+                            }, 1000); // Slightly longer delay for better user experience
+                        }
+                    });
+                }, {
+                    threshold: 0.3, // Trigger when 30% of the founder section is visible
+                    rootMargin: '0px' // Consider viewport edges as trigger points
+                });
+                
+                founderObserver.observe(founderSection);
+            }
+
+            // Handle popup form submission
+            const popupForm = document.querySelector('.popup-newsletter-form');
+            popupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for subscribing to our newsletter!');
+                newsletterPopup.classList.remove('show');
+                this.reset();
+            });
+
+            // --- SMOOTH SCROLL FOR "JOIN THE MOVEMENT" BUTTON ---
+            const joinButton = document.getElementById('join-movement-btn');
+            if (joinButton) {
+                joinButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // --- SCROLL-TRIGGERED ANIMATIONS ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+            elementsToAnimate.forEach(el => observer.observe(el));
+            
+            // --- FORM SUBMISSION HANDLING (prevents actual submission) ---
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Thank you for your interest! This is a demo page.');
+                    this.reset();
+                });
+            });
+
+            // --- SUBTLE PARALLAX FOR HERO BACKGROUND (optional enhancement) ---
+            // This can be enhanced further, but a simple version is included.
+            const hero = document.querySelector('.hero');
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.pageYOffset;
+                // Move the background slightly slower than the scroll
+                if (hero) {
+                    hero.style.backgroundPositionY = `${scrollPosition * 0.7}px`;
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
