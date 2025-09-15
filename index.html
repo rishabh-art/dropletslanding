@@ -868,13 +868,10 @@
                 founderObserver.observe(founderSection);
             }
 
-            // Handle popup form submission
+            // Hide popup after submission
             const popupForm = document.querySelector('.popup-newsletter-form');
-            popupForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Thank you for subscribing to our newsletter!');
+            popupForm.addEventListener('submit', function() {
                 newsletterPopup.classList.remove('show');
-                this.reset();
             });
 
             // --- SMOOTH SCROLL FOR "JOIN THE MOVEMENT" BUTTON ---
@@ -902,15 +899,7 @@
             const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
             elementsToAnimate.forEach(el => observer.observe(el));
             
-            // --- FORM SUBMISSION HANDLING (prevents actual submission) ---
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    alert('Thank you for your interest! This is a demo page.');
-                    this.reset();
-                });
-            });
+            // Remove form submission prevention to allow FormSubmit to work
 
             // --- SUBTLE PARALLAX FOR HERO BACKGROUND (optional enhancement) ---
             // This can be enhanced further, but a simple version is included.
